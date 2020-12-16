@@ -18,7 +18,7 @@ namespace test.DAO
             var films = new List<FilmViewModel>();
             var sqlExpression = string.Format("SELECT id, title, id_country, release_year, duration, description, " +
                 "image_path, raiting FROM movies {0}", additionalCondition);
-            int idCountry;
+            var idCountry = 0;
             void addValues(NpgsqlDataReader reader)
             {
                 idCountry = (int)reader.GetValue(2);
@@ -31,16 +31,20 @@ namespace test.DAO
                     Year = (int)reader.GetValue(3),
                     ImagePath = reader.GetValue(6).ToString(),
                     DurationInMinutes = Convert.ToInt16(reader.GetValue(4)),
-                    Country = GetCounrtyById(idCountry),
-                    Producers = GetPersonsByFilmId(id, "producers", "movies_producers", "id_producer"),
-                    Actors = GetPersonsByFilmId(id, "actors", "actors_movies", "id_actor"),
-                    Reviews = GetReviewByFilmId(id),
-                    Genres = GetGenresByFilmId(id, needTwoGenres),
                     Rating = Math.Round(Convert.ToDouble(reader.GetValue(7)), 2)
                 };
                 films.Add(film);
             }
             DAOFactory.ToHandleRequest(sqlExpression, addValues);
+            foreach (var film in films)
+            {
+                var id = film.Id;
+                film.Country = GetCounrtyById(idCountry);
+                film.Producers = GetPersonsByFilmId(id, "producers", "movies_producers", "id_producer");
+                film.Actors = GetPersonsByFilmId(id, "actors", "actors_movies", "id_actor");
+                film.Reviews = GetReviewByFilmId(id);
+                film.Genres = GetGenresByFilmId(id, needTwoGenres);
+            }
             return films;
         }
 
@@ -73,19 +77,22 @@ namespace test.DAO
         public static List<ScheduleViewModel> GetSchedule(string str)
         {
             var schedules = new List<ScheduleViewModel>();
-            var sqlExpression = string.Format("SELECT id_schedule, fix_price, date, id_movie" +
+            var sqlExpression = string.Format("SELECT id_schedule, fix_price, id_movie, date" +
                 " FROM schedule WHERE {0}", str);
             void addValues(NpgsqlDataReader reader)
             {
-                var scheduleId = (int)reader.GetValue(0);
-                var pricePerSeat = Convert.ToDecimal(reader.GetValue(1));
-                var time = (DateTime)reader.GetValue(2);
-                var hall = GetHallByScheduleId(scheduleId);
-                var film = GetFilms(string.Format("WHERE id = {0}", (int)reader.GetValue(3)), false).FirstOrDefault();
-                var schedule = new ScheduleViewModel(scheduleId, pricePerSeat, film, time, hall);
+                var schedule = new ScheduleViewModel()
+                {
+                    Id = (int)reader.GetValue(0),
+                    PricePerSeat = Convert.ToDecimal(reader.GetValue(1)),
+                    IdFilm = (int)reader.GetValue(2),
+                    Time = ((DateTime)reader.GetValue(3))
+                };
                 schedules.Add(schedule);
             }
             DAOFactory.ToHandleRequest(sqlExpression, addValues);
+            foreach (var schedule in schedules)
+                schedule.Hall = GetHallByScheduleId(schedule.Id);
             return schedules;
         }
 
@@ -107,15 +114,16 @@ namespace test.DAO
 
         public static int[] GetSeatsRowCountByHallId(int id, int rowCount)
         {
-            Debug.WriteLine("seats");
-            var result = new int[rowCount + 1];
-            var sqlExpression = string.Format("SELECT row_number, count_places FROM rows JOIN halls_rows ON rows.id = id_row " +
-                "JOIN halls ON halls.id = {0} and halls.id = id_hall", id);
-            void addValues(NpgsqlDataReader reader)
-            {
-                result[Convert.ToInt16(reader.GetValue(0))] = Convert.ToInt32(reader.GetValue(1));
-            }
-            DAOFactory.ToHandleRequest(sqlExpression, addValues);
+            /* Debug.WriteLine("seats");
+             var result = new int[rowCount + 1];
+             var sqlExpression = string.Format("SELECT row_number, count_places FROM rows JOIN halls_rows ON rows.id = id_row " +
+                 "JOIN halls ON halls.id = {0} and halls.id = id_hall", id);
+             void addValues(NpgsqlDataReader reader)
+             {
+                 result[Convert.ToInt16(reader.GetValue(0))] = Convert.ToInt32(reader.GetValue(1));
+             }
+             DAOFactory.ToHandleRequest(sqlExpression, addValues);*/
+            var result = new int[5] { 10, 10, 10, 10, 10 };
             return result;
         }
 
@@ -198,7 +206,7 @@ namespace test.DAO
             return result;
         }
 
-        private static List<string> GetGenresByFilmId(int id, bool needTwoGenres)
+        public static List<string> GetGenresByFilmId(int id, bool needTwoGenres)
         {
             var result = new List<string>();
             var sqlExpression = string.Format("SELECT name FROM genres WHERE id IN (SELECT genre_id FROM movies_genres " +

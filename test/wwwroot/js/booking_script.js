@@ -51,10 +51,10 @@ $(function () {
 
         $.ajax({
             type: "POST",
-            url: window.location.origin + `/booking/${window.scheduleId}/book_seats`,
+            url: window.location.origin + `/booking/${window.scheduleId}`,
             data: JSON.stringify(seats),
             contentType: 'application/json',
-            dataType: 'text'
+            dataType: 'json'
         }).done(function () {
             document.location.reload();
         })

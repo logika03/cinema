@@ -39,8 +39,8 @@ namespace test.Pages
             HttpContext.Items["CurrentDay"] = date;
             ScheduleCurrent = DAOFactory.GetIdFilmWithSchedule(date);
             //Передаем во View только те фильмы, которые имеют хотя бы один сеанс на выбранную дату date
-            Films = FilmViewModelDAO.GetFilms(
-                string.Format("WHERE id IN (SELECT id_movie FROM schedule WHERE date::DATE = '{0}')", date.ToString("yyyy-MM-dd")), false);
+            Films = MainViewModelDAO.GetFilms(
+                $"AND id IN (SELECT id_movie FROM schedule WHERE date::DATE = '{date:yyyy-MM-dd}')");
             /*foreach (var film in Films)
                 film.Schedule = FilmViewModelDAO.GetScheduleById(film.Id, "id_movie");*/
         }

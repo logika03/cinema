@@ -27,10 +27,8 @@ namespace test.Pages
             return Redirect("/");
         }
 
-        public IActionResult OnPost(params object[] arg) // string login, string password)
+        public IActionResult OnPost(string login, string password) // string login, string password)
         {
-            var login = "logika";
-            var password = "12aZ";
             var done = AddUsers(login, password);
             if (done)
                 return Redirect(string.Format("~/user/{0}", _authService.Id));

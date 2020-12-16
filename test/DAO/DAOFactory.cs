@@ -10,7 +10,7 @@ namespace test.DAO
 {
     public class DAOFactory
     {
-        private static readonly string connectionString = string.Format("Server={0};Port={1};Username={2};Password={3};Database={4};",
+        private static readonly string connectionString = string.Format("Server={0};Port={1};User Id={2};Password={3};Database={4};",
                "localhost", "5432", "postgres", "postgres", "cinema");
 
         public static void ToHandleRequest(string sqlExpression, Action<NpgsqlDataReader> addValues)
@@ -33,7 +33,7 @@ namespace test.DAO
             connection.Open();
             NpgsqlCommand command = new NpgsqlCommand(sqlExpression.ToString(), connection);
             command.ExecuteNonQuery();
-            connection.Close();
+            
         }
 
 
@@ -67,7 +67,7 @@ namespace test.DAO
                 "id_user = users.id AND id_schedule ={0}", id_schedule);
             void addValues(NpgsqlDataReader reader)
             {
-                //var scheduleId = (int)reader.GetValue(0);
+                var scheduleId = (int)reader.GetValue(0);
                 result.Add(new BookingViewModel()
                 {
                     BookingCode = reader.GetValue(0).ToString(),
@@ -75,6 +75,7 @@ namespace test.DAO
                     Schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {id_schedule}").FirstOrDefault(),
                     Row = Convert.ToInt16(reader.GetValue(2)),
                     Seat = Convert.ToInt16(reader.GetValue(3))
+
                 });
             }
             ToHandleRequest(sqlExpression, addValues);
@@ -103,9 +104,9 @@ namespace test.DAO
             var schedules = FilmViewModelDAO.GetSchedule($"date::DATE = '{date:yyyy-MM-dd}'");
             var scheduleWithFilm = new Dictionary<int, List<ScheduleViewModel>>();
             foreach (var schedule in schedules)
-                if (scheduleWithFilm.ContainsKey(schedule.Film.Id))
-                    scheduleWithFilm[schedule.Film.Id].Add(schedule);
-                else scheduleWithFilm.Add(schedule.Film.Id, new List<ScheduleViewModel> { schedule });
+                if (scheduleWithFilm.ContainsKey(schedule.IdFilm))
+                    scheduleWithFilm[schedule.IdFilm].Add(schedule);
+                else scheduleWithFilm.Add(schedule.IdFilm, new List<ScheduleViewModel> { schedule });
             return scheduleWithFilm;
         }
     }

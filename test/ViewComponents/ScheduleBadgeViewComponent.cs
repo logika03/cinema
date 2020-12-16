@@ -8,7 +8,7 @@ namespace test
 {
     public class ScheduleBadgeViewComponent : ViewComponent
     {
-        private AuthService _authService;
+        private readonly AuthService _authService;
         public ScheduleBadgeViewComponent(AuthService authService)
         {
             _authService = authService;

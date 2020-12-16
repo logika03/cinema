@@ -27,7 +27,7 @@ namespace test.Pages
 
         private void CreateFilmsList(int page)
         {
-            var films = FilmViewModelDAO.GetFilms("WHERE is_rent = 1", false);
+            var films = MainViewModelDAO.GetFilms(""); // FilmViewModelDAO.GetFilms("WHERE is_rent = 1", false);
             var filmsPerPage = 10;
             var totalPages = films.Count / filmsPerPage + (films.Count % filmsPerPage > 0 ? 1 : 0);
             FilmsViewModel = new FilmsViewModel(
