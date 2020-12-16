@@ -5,39 +5,17 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Pages\UserEdit.cshtml~RFd9703e.TMP" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+      <PackageReference Include="Npgsql" Version="5.0.1.1" />
     </ItemGroup>
 
     <ItemGroup>
       <Compile Update="Views\ProjectArt\BookingPageModel.cs">
         <DependentUpon>Booking.cshtml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\ProjectArt\FilmPageModel.cs">
-        <DependentUpon>Film.cshtml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\ProjectArt\FilmsPageModel.cs">
-        <DependentUpon>Films.cshtml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\ProjectArt\MainPageModel.cs">
-        <DependentUpon>Main.cshtml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\ProjectArt\RegistrationPageModel.cs">
-        <DependentUpon>Registration.cshtml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\ProjectArt\SchedulePageModel.cs">
-        <DependentUpon>Schedule.cshtml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\ProjectArt\TermsOfUsePageModel.cs">
-        <DependentUpon>TermsOfUse.cshtml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\ProjectArt\UserPageModel.cs">
-        <DependentUpon>User.cshtml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\ProjectArt\UserBookingPageModel.cs">
-        <DependentUpon>UserBooking.cshtml</DependentUpon>
-      </Compile>
-      <Compile Update="Pages\ProjectArt\UserEditPageModel.cs">
-        <DependentUpon>UserEdit.cshtml</DependentUpon>
       </Compile>
     </ItemGroup>
 

@@ -5,8 +5,9 @@
         public int Id;
         
         public string BookingCode;
-        public UserViewModel User;
+        public string UserNickName;
         public ScheduleViewModel Schedule;
+        public int Row;
         public int Seat;
     }
 }

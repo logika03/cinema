@@ -1,0 +1,50 @@
+﻿@page "/booking/{id}"
+@model test.Pages.BookingModel
+@inject AuthService AuthService
+@{
+    var unavailableSeats = Model.BookingPageViewModel.BookingsInSchedule
+        .ToDictionary(booking => booking.Seat);
+    var id = Model.Id;
+    var schedule = Model.BookingPageViewModel.Schedule;
+}
+
+<div id="main" class="z-index--1">
+    <div class="super-container p-2 mb-4">
+        <div class="mt-3 w-100">
+            <div id="booking-alert" class="alert alert-danger login-form-error d-none">
+                <div class="text-center">Произошла ошибка</div>
+            </div>
+            <h3 class="text-center">Зал @schedule.Hall.HallNumber</h3>
+            <div class="text-center">Цена за место: @schedule.PricePerSeat руб.</div>
+            <input type="hidden" id="pricePerSeat" value="@schedule.PricePerSeat" />
+            <input type="hidden" id="seatsPerRow" value="@schedule.Hall.SeatsRowCount[1]" />
+            <input type="hidden" id="scheduleId" value="@schedule.Id" />
+        </div>
+
+        <div class="py-3 px-5" id="places-grid">
+        </div>
+
+        <div class="py-3 px-5 d-none" id="places">
+            @for (int i = 0; i < 20; i++)
+            {
+                if (unavailableSeats.ContainsKey(i))
+                {
+<div class="seat-button @(unavailableSeats[i].UserNickName == AuthService.Name?"user-seat":"")" disabled> </div> }
+                else
+                {
+<div class="seat-button"> </div>}
+            }
+        </div>
+
+        <div class="w-100 d-flex flex-column justify-content-center align-items-center">
+            <div class="my-2">Цена: <span id="price">0</span> руб.</div>
+            <button id="book-submit" class="btn btn-outline-dark-transparent mt-1">
+                Забронировать
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/booking_script.js"></script>
+}

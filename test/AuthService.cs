@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,22 +14,24 @@ namespace test
         
         public bool IsAuthenticated;
         public string Name;
+        public int Id;
 
         public AuthService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             Name = _httpContextAccessor.HttpContext.Session.GetString("Login");
+            Id = Convert.ToInt32(_httpContextAccessor.HttpContext.Session.GetString("Id"));
             IsAuthenticated = Name != null;
         }
 
-        //Аунтификация пользователя(ставит в cookie информацию о пользователе
+        //Аутентификация пользователя(ставит в cookie информацию о пользователе
         //и позволяет потом получать ее через сервис)
         public void AuthenticateUser(string login)
         {
             _httpContextAccessor.HttpContext.Session.SetString("Login", login);
         }
 
-        //Стирание аунтификационных cookie с клиента пользователя
+        //Стирание аутентификационных cookie с клиента пользователя
         public void Logout()
         {
             _httpContextAccessor.HttpContext.Session.Remove("Login");

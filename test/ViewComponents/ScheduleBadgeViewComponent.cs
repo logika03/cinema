@@ -32,13 +32,13 @@ namespace test
             badgeTagBuilder.AddCssClass("badge-outline-white");
             
             if(_authService.IsAuthenticated)
-                badgeTagBuilder.Attributes.Add("href", Url.Content($"~/booking/{scheduleViewModel.Id}"));
+                badgeTagBuilder.Attributes.Add("href", Url.Content(string.Format("~/booking/{0}", scheduleViewModel.Id)));
             else
             {
                 badgeTagBuilder.Attributes.Add("data-toggle", "modal");
                 badgeTagBuilder.Attributes.Add("data-target", "#loginModal");
             }
-            badgeTagBuilder.InnerHtml.Append(scheduleViewModel.Time.ToString("hh:mm"));
+            badgeTagBuilder.InnerHtml.Append(scheduleViewModel.Time.ToString("HH:mm"));
 
             var priceTag = new TagBuilder("small");
             priceTag.InnerHtml.Append($"{scheduleViewModel.PricePerSeat} руб.");

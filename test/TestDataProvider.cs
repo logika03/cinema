@@ -5,7 +5,7 @@ using test.Models;
 
 namespace test
 {
-    public static class TestDataProvider
+   /* public static class TestDataProvider
     {
         public static Dictionary<int, FilmViewModel> Films =
             new Dictionary<int, FilmViewModel>();
@@ -62,7 +62,6 @@ namespace test
                 user.Id = i;
                 Users.Add(user.Id, user);
             }
-
             for (int i = 0; i < count; i++)
             {
                 var film = new FilmViewModel();
@@ -73,7 +72,7 @@ namespace test
                 film.ImagePath = "~/images/films/film.png";
                 film.Rating = rand.Next(0, 10);
                 
-                film.Producer = $"Продьюсер {i}";
+               // film.Producers = $"Продюсер {i}";
                 var actors = new List<string>();
                 var actorsCount = rand.Next(1,6);
                 for (int j = 0; j < actorsCount; j++)
@@ -109,7 +108,7 @@ namespace test
 
                 film.Reviews = reviews;
 
-                film.Duration = TimeSpan.FromMinutes(rand.Next(60, 200));
+                film.DurationInMinutes = rand.Next(60, 200);
 
                 var schedules = new List<ScheduleViewModel>();
 
@@ -175,5 +174,5 @@ namespace test
                 Users[i].Bookings = bookings;
             }
         }
-    }
+    }*/
 }

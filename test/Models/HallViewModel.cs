@@ -1,9 +1,11 @@
-﻿namespace test.Models
+﻿using System.Collections.Generic;
+
+namespace test.Models
 {
     public class HallViewModel
     {
-        public int SeatsCount;
-        public int HallNumber;
-        public int SeatsPerRow = 10;
+        public int RowCount; //количество рядов
+        public int HallNumber; // номер зала
+        public int[] SeatsRowCount; //количество мест в каждом ряду
     }
 }

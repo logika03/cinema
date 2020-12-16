@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using test.Controllers;
 
 namespace test
 {
@@ -25,12 +27,13 @@ namespace test
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRazorPages();
             services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddHttpContextAccessor();
-            services.AddScoped<AuthService>();
+            services.AddSingleton<AuthService>();
             services.AddControllersWithViews();
-            TestDataProvider.InitializeWithRandom(120, 10);
+            //TestDataProvider.InitializeWithRandom(120, 10);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,7 +51,6 @@ namespace test
             }
 
             app.UseSession();
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -57,12 +59,9 @@ namespace test
             app.UseAuthorization();
 
             app.UseMiddleware<CityMiddleware>();
-
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

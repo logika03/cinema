@@ -1,0 +1,67 @@
+﻿@page "/user/{id}"
+@model test.Pages.UserModel
+
+@{
+    var userViewModel = Model.UserViewModel;
+    ViewData["title"] = userViewModel.NickName;
+}
+<div id="main" class="z-index--1">
+    <div class="row center-margin">
+        <div class="col-auto">
+            @await Html.PartialAsync("_UserButtonsPartial", userViewModel)
+        </div>
+
+        <div class="col-10 mb-5">
+            <div class="row">
+                <div class="m-0 w-100 super-container h-96px">
+                    <h2 class="text-center">Личная информация</h2>
+                </div>
+            </div>
+             
+            <div class="row mt-2">
+                <div class="m-0 w-100 super-container px-5">
+                    <h3 class="text-center my-3">Профиль</h3>
+                    <div class="border-container-white px-2 py-1 my-4 w-100">
+                        <div class="list-group-flush list-group w-100">
+                            <div class="list-group-item p-4 li-dark-transparent no-cursor-action d-flex justify-content-between align-items-center">
+                                <span class="text-large">Фотография</span>
+                                <div class="p-0 review-list-item-content">
+                                    <img src="@Url.Content(userViewModel.ImagePath)" class="bg-white d-flex align-items-center justify-content-center h-100 w-100" />
+                                </div>
+                            </div>
+
+                            <div class="list-group-item p-4 li-dark-transparent no-cursor-action d-flex justify-content-between align-items-center">
+                                <span class="text-large">Никнейм</span>
+                                <span class="text-large">@userViewModel.NickName</span>
+                            </div>
+
+                            <div class="list-group-item p-4 li-dark-transparent no-cursor-action d-flex justify-content-between align-items-center">
+                                <span class="text-large">Имя</span>
+                                <span class="text-large">@userViewModel.Name</span>
+                            </div>
+
+                            <div class="list-group-item p-4 li-dark-transparent no-cursor-action d-flex justify-content-between align-items-center">
+                                <span class="text-large">Фамилия</span>
+                                <span class="text-large">@userViewModel.Surname</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="m-0 w-100 super-container px-5">
+                    <h3 class="text-center my-3">Контактная информация</h3>
+                    <div class="border-container-white px-2 py-1 my-4 w-100">
+                        <div class="list-group-flush list-group w-100">
+                            <div class="list-group-item p-4 li-dark-transparent no-cursor-action d-flex justify-content-between align-items-center">
+                                <span class="text-large">Email</span>
+                                <span class="text-large">@userViewModel.Email</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

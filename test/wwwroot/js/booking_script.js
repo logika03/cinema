@@ -1,11 +1,11 @@
-$(function (){
+$(function () {
     window.pricePerSeat = Number($('#pricePerSeat').val());
     window.totalPrice = 0;
     window.$price = $('#price');
     window.seatsPerRow = Number($('#seatsPerRow').val());
     window.scheduleId = Number($('#scheduleId').val());
 
-    $('.seat-button').each(function(index){
+    $('.seat-button').each(function (index) {
         let $this = $(this);
         let val = GetGridElementsPosition(index);
         $this.attr("index", index);
@@ -13,7 +13,7 @@ $(function (){
 
         let rows = $('.places-grid');
         let row = undefined;
-        if(rows.length > val.row)
+        if (rows.length > val.row)
             row = rows[val.row];
         else {
             row = $(document.createElement("div"));
@@ -26,9 +26,9 @@ $(function (){
 
     $('#places').remove();
 
-    $('.seat-button:not([disabled])').click(function (){
+    $('.seat-button:not([disabled])').click(function () {
         let $this = $(this);
-        if($this.hasClass('chosen')) {
+        if ($this.hasClass('chosen')) {
             window.totalPrice -= window.pricePerSeat;
             window.$price.text(window.totalPrice);
             $this.removeClass('chosen');
@@ -40,10 +40,10 @@ $(function (){
         }
     });
 
-    $('#book-submit').click(function (){
+    $('#book-submit').click(function () {
         $('#book-submit').prop("disabled", true);
         let seats = [];
-        $('.seat-button:not([disabled]).chosen').each(function (){
+        $('.seat-button:not([disabled]).chosen').each(function () {
             let $this = $(this);
             let index = Number($this.attr("index"));
             seats.push(index);
@@ -55,21 +55,21 @@ $(function (){
             data: JSON.stringify(seats),
             contentType: 'application/json',
             dataType: 'text'
-        }).done(function (){
-                document.location.reload();
-            })
-            .fail(function (){
+        }).done(function () {
+            document.location.reload();
+        })
+            .fail(function () {
                 $('#booking-alert').removeClass('d-none');
                 $('#book-submit').prop("disabled", false);
             });
     });
 });
 
-function GetGridElementsPosition(index){
+function GetGridElementsPosition(index) {
     const colCount = window.seatsPerRow;
     const rowPosition = Math.floor(index / colCount);
     const colPosition = index % colCount;
 
-    return { row: rowPosition, column: colPosition } ;
+    return { row: rowPosition, column: colPosition };
 }
 
