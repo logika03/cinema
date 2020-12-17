@@ -10,30 +10,53 @@ namespace test.DAO
 {
     public class DAOFactory
     {
-        private static readonly string connectionString = string.Format("Server={0};Port={1};Username={2};Password={3};Database={4};",
-               "localhost", "5432", "postgres", "postgres", "cinema");
+        private static readonly string connectionString = string.Format("Server={0};Port={1};Username={2};Password={3};Database={4};SSL Mode=Require;TrustServerCertificate=True;",
+               "ec2-79-125-86-58.eu-west-1.compute.amazonaws.com",
+               "5432",
+               "rzaectkvgzqzgp",
+               "f9bb2b9ce77fa503537502236b7164dd081f91f04fdeb22d03cc4adea92c8d26",
+               "davp5c92d72p4t");
 
         public static void ToHandleRequest(string sqlExpression, Action<NpgsqlDataReader> addValues)
         {
-            using var connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            NpgsqlCommand command = new NpgsqlCommand(sqlExpression, connection);
-            NpgsqlDataReader reader = command.ExecuteReader();
-            if (reader.HasRows)
+            using (var connection = new NpgsqlConnection(connectionString))
             {
-                while (reader.Read())
-                    addValues(reader);
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand(sqlExpression, connection);
+                NpgsqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                        addValues(reader);
+                }
+
+                connection.Close();
             }
-            connection.Close();
         }
 
         public static void AddData(string sqlExpression)
         {
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-            connection.Open();
-            NpgsqlCommand command = new NpgsqlCommand(sqlExpression.ToString(), connection);
-            command.ExecuteNonQuery();
-            connection.Close();
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand(sqlExpression.ToString(), connection);
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        
+        public static object AddDataScalar(string sqlExpression)
+        {
+            object result = null;
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                NpgsqlCommand command = new NpgsqlCommand(sqlExpression.ToString(), connection);
+                result = command.ExecuteScalar();
+                connection.Close();
+            }
+
+            return result;
         }
 
 
@@ -67,12 +90,10 @@ namespace test.DAO
                 "id_user = users.id AND id_schedule ={0}", id_schedule);
             void addValues(NpgsqlDataReader reader)
             {
-                //var scheduleId = (int)reader.GetValue(0);
                 result.Add(new BookingViewModel()
                 {
                     BookingCode = reader.GetValue(0).ToString(),
                     UserNickName = reader.GetValue(1).ToString(),
-                    Schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {id_schedule}").FirstOrDefault(),
                     Row = Convert.ToInt16(reader.GetValue(2)),
                     Seat = Convert.ToInt16(reader.GetValue(3))
                 });
@@ -103,9 +124,9 @@ namespace test.DAO
             var schedules = FilmViewModelDAO.GetSchedule($"date::DATE = '{date:yyyy-MM-dd}'");
             var scheduleWithFilm = new Dictionary<int, List<ScheduleViewModel>>();
             foreach (var schedule in schedules)
-                if (scheduleWithFilm.ContainsKey(schedule.Film.Id))
-                    scheduleWithFilm[schedule.Film.Id].Add(schedule);
-                else scheduleWithFilm.Add(schedule.Film.Id, new List<ScheduleViewModel> { schedule });
+                if (scheduleWithFilm.ContainsKey(schedule.FilmId))
+                    scheduleWithFilm[schedule.FilmId].Add(schedule);
+                else scheduleWithFilm.Add(schedule.FilmId, new List<ScheduleViewModel> { schedule });
             return scheduleWithFilm;
         }
     }

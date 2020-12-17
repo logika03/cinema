@@ -33,8 +33,7 @@
         <div id="movies-list" class="movies-today-list list-group list-group-flush">
             @foreach (var film in Model.Films)
             {
-                var model = new Tuple<FilmViewModel, List<ScheduleViewModel>>(film, Model.ScheduleCurrent[film.Id]);
-                @await Html.PartialAsync("_ScheduleMovieItemPartial", model)
+                @await Html.PartialAsync("_ScheduleMovieItemPartial", film)
             }
         </div>
     </div>

@@ -18,5 +18,11 @@ namespace test.Models
             Time = time;
             Hall = hall;
         }
+
+        public ScheduleViewModel()
+        {
+        }
+
+        public int FilmId { get; set; }
     }
 }

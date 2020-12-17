@@ -51,11 +51,17 @@ namespace test.Pages
                 currentDay = DateTime.ParseExact(
                     Request.Query["schedule_date"],
                     "dd.MM.yyyy", CultureInfo.InvariantCulture);
-            ScheduleCurrent = FilmViewModelDAO.GetSchedule($"id_movie={id} AND date::DATE = '{currentDay:yyyy-MM-dd}'");
             HttpContext.Items["CurrentDay"] = currentDay;
+
             var film = FilmViewModelDAO.GetFilms($"WHERE id = {id}", false).FirstOrDefault();
             //film.Schedule = FilmViewModelDAO.GetScheduleById(id, "id_movie");
             FilmViewModel = film;
+
+            FilmViewModel.Actors = FilmViewModelDAO.GetActorsByFilmId(FilmViewModel.Id);
+            FilmViewModel.Producers = FilmViewModelDAO.GetProducersByFilmId(FilmViewModel.Id);
+            FilmViewModel.Country = FilmViewModelDAO.GetCounrtyById(FilmViewModel.CountryId);
+            FilmViewModel.Reviews = FilmViewModelDAO.GetReviewByFilmId(FilmViewModel.Id);
+            FilmViewModel.Schedule = FilmViewModelDAO.GetSchedule($"id_movie={id} AND date::DATE = '{currentDay:yyyy-MM-dd}'");
         }
     }
 }

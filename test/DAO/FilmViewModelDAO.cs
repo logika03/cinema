@@ -31,18 +31,33 @@ namespace test.DAO
                     Year = (int)reader.GetValue(3),
                     ImagePath = reader.GetValue(6).ToString(),
                     DurationInMinutes = Convert.ToInt16(reader.GetValue(4)),
-                    Country = GetCounrtyById(idCountry),
-                    Producers = GetPersonsByFilmId(id, "producers", "movies_producers", "id_producer"),
-                    Actors = GetPersonsByFilmId(id, "actors", "actors_movies", "id_actor"),
-                    Reviews = GetReviewByFilmId(id),
-                    Genres = GetGenresByFilmId(id, needTwoGenres),
+                    CountryId = idCountry,
                     Rating = Math.Round(Convert.ToDouble(reader.GetValue(7)), 2)
                 };
                 films.Add(film);
             }
             DAOFactory.ToHandleRequest(sqlExpression, addValues);
+            
+            /*foreach(var film in films)
+            {
+                var id = film.Id;
+                film.Country = GetCounrtyById(film.CountryId);
+                film.Actors = GetActorsByFilmId(id);
+                film.Producers = GetProducersByFilmId(id);
+                film.Reviews = GetReviewByFilmId(id);
+            }*/
+
+            foreach (var film in films)
+                film.Genres = GetGenresByFilmId(film.Id, needTwoGenres);
+            
             return films;
         }
+
+        public static List<string> GetProducersByFilmId(int id)
+            => GetPersonsByFilmId(id, "producers", "movies_producers", "id_producer");
+
+        public static List<string> GetActorsByFilmId(int id)
+            => GetPersonsByFilmId(id, "actors", "actors_movies", "id_actor");
 
         private static List<string> GetPersonsByFilmId(int id, string tableName, string stagingTableName, string idPerson)
         {
@@ -80,16 +95,21 @@ namespace test.DAO
                 var scheduleId = (int)reader.GetValue(0);
                 var pricePerSeat = Convert.ToDecimal(reader.GetValue(1));
                 var time = (DateTime)reader.GetValue(2);
-                var hall = GetHallByScheduleId(scheduleId);
-                var film = GetFilms(string.Format("WHERE id = {0}", (int)reader.GetValue(3)), false).FirstOrDefault();
-                var schedule = new ScheduleViewModel(scheduleId, pricePerSeat, film, time, hall);
+                // var hall = GetHallByScheduleId(scheduleId);
+                var schedule = new ScheduleViewModel()
+                {
+                    Id = scheduleId,
+                    PricePerSeat = pricePerSeat,
+                    Time = time,
+                    FilmId = (int)reader.GetValue(3)
+                };
                 schedules.Add(schedule);
             }
             DAOFactory.ToHandleRequest(sqlExpression, addValues);
             return schedules;
         }
 
-        private static HallViewModel GetHallByScheduleId(int id)
+        public static HallViewModel GetHallByScheduleId(int id)
         {
             var hall = new HallViewModel();
             var sqlExpression = string.Format("SELECT id, count_row FROM halls WHERE id = (SELECT id_hall FROM schedule WHERE id_schedule = {0})", id);
@@ -99,9 +119,9 @@ namespace test.DAO
                 var rowCount = Convert.ToInt16(reader.GetValue(1));
                 hall.HallNumber = hallId;
                 hall.RowCount = rowCount;
-                hall.SeatsRowCount = GetSeatsRowCountByHallId(hallId, rowCount);
             }
             DAOFactory.ToHandleRequest(sqlExpression, addValues);
+            hall.SeatsRowCount = GetSeatsRowCountByHallId(hall.HallNumber, hall.RowCount);
             return hall;
         }
 
@@ -127,14 +147,21 @@ namespace test.DAO
             void addValues(NpgsqlDataReader reader)
             {
                 var userId = (int)reader.GetValue(3);
-                var review = new ReviewViewModel(
-                    GetUserById(userId),
-                    reader.GetValue(0).ToString(),
-                    (DateTime)reader.GetValue(1),
-                    Convert.ToInt16(reader.GetValue(2)));
+                var review = new ReviewViewModel()
+                    //GetUserById(userId)
+                {
+                    UserId = userId,
+                    ReviewText = reader.GetValue(0).ToString(),
+                    TimeOfReview = (DateTime)reader.GetValue(1),
+                    Rating = Convert.ToInt16(reader.GetValue(2))
+                };
                 result.Add(review);
             }
             DAOFactory.ToHandleRequest(sqlExpression, addValues);
+
+            foreach (var review in result)
+                review.User = GetUserById(review.UserId);
+
             return result;
         }
 
@@ -155,7 +182,6 @@ namespace test.DAO
                         Surname = reader.GetValue(3).ToString(),
                         Email = reader.GetValue(4).ToString(),
                         Password = reader.GetValue(5).ToString(),
-                        Bookings = GetBookingsByUserId(id),
                         ImagePath = reader.GetValue(6).ToString()
                     };
                 }
@@ -164,11 +190,14 @@ namespace test.DAO
             return result;
         }
 
-        private static List<BookingViewModel> GetBookingsByUserId(int id)
+        public static List<BookingViewModel> GetBookingsByUserId(int id)
         {
             var result = new List<BookingViewModel>();
             var sqlExpression = string.Format("SELECT id, code, row, place, id_schedule" +
                 " FROM tickets WHERE id_user = {0}", id);
+
+            var userNickName = GetNickNameUserById(id);
+            
             void addValues(NpgsqlDataReader reader)
             {
                 var idSchedule = (int)reader.GetValue(4);
@@ -176,17 +205,19 @@ namespace test.DAO
                 {
                     Id = (int)reader.GetValue(0),
                     BookingCode = reader.GetValue(1).ToString(),
-                    Schedule = GetSchedule($"id_schedule = {idSchedule}").FirstOrDefault(),
-                    Row = (int)reader.GetValue(2),
-                    Seat = (int)reader.GetValue(3),
-                    UserNickName = GetNickNameUserById(id)
-               };
+                    ScheduleId = idSchedule,
+                    Row = Convert.ToInt32(reader.GetValue(2)),
+                    Seat = Convert.ToInt32(reader.GetValue(3)),
+                    UserNickName = userNickName
+               }; 
+                
+               result.Add(booking);
             }
             DAOFactory.ToHandleRequest(sqlExpression, addValues);
             return result;
         }
 
-        private static string GetNickNameUserById(int id)
+        public static string GetNickNameUserById(int id)
         {
             var result = "";
             var sqlExpression = string.Format("SELECT nickname FROM users WHERE id = {0}", id);
@@ -198,7 +229,7 @@ namespace test.DAO
             return result;
         }
 
-        private static List<string> GetGenresByFilmId(int id, bool needTwoGenres)
+        public static List<string> GetGenresByFilmId(int id, bool needTwoGenres)
         {
             var result = new List<string>();
             var sqlExpression = string.Format("SELECT name FROM genres WHERE id IN (SELECT genre_id FROM movies_genres " +

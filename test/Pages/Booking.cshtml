@@ -1,11 +1,14 @@
 ﻿@page "/booking/{id}"
+@using Microsoft.AspNetCore.Antiforgery
 @model test.Pages.BookingModel
 @inject AuthService AuthService
+@inject IAntiforgery Antiforgery
 @{
     var unavailableSeats = Model.BookingPageViewModel.BookingsInSchedule
-        .ToDictionary(booking => booking.Seat);
+        .ToDictionary(booking => (booking.Row, booking.Seat));
     var id = Model.Id;
     var schedule = Model.BookingPageViewModel.Schedule;
+    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
 }
 
 <div id="main" class="z-index--1">
@@ -27,9 +30,10 @@
         <div class="py-3 px-5 d-none" id="places">
             @for (int i = 0; i < 20; i++)
             {
-                if (unavailableSeats.ContainsKey(i))
+                var key = (i / schedule.Hall.SeatsRowCount[1], i % schedule.Hall.SeatsRowCount[1]);
+                if (unavailableSeats.ContainsKey(key))
                 {
-<div class="seat-button @(unavailableSeats[i].UserNickName == AuthService.Name?"user-seat":"")" disabled> </div> }
+<div class="seat-button @(unavailableSeats[key].UserNickName == AuthService.Name?"user-seat":"")" disabled> </div> }
                 else
                 {
 <div class="seat-button"> </div>}
@@ -38,6 +42,7 @@
 
         <div class="w-100 d-flex flex-column justify-content-center align-items-center">
             <div class="my-2">Цена: <span id="price">0</span> руб.</div>
+            <input type="hidden" name="__RequestVerificationToken" value="@token" />
             <button id="book-submit" class="btn btn-outline-dark-transparent mt-1">
                 Забронировать
             </button>

@@ -12,10 +12,7 @@ namespace test.Pages.ProjectArt
 {
     public class MainPageModel : PageModel
     {
-        public BookingPageViewModel ViewModel;
         public MainViewModel MainModel;
-        public Dictionary<int, List<ScheduleViewModel>> TodaySchedule;
-
         public IActionResult OnGet()
         {
             CreateDataMainModel();
@@ -36,9 +33,14 @@ namespace test.Pages.ProjectArt
                 //В TodayFilms берем фильмы, у которых есть хотя бы 1 сеанс сегодня
                 TodayFilms = FilmViewModelDAO.GetFilms("WHERE is_rent = 1 AND EXISTS (SELECT * FROM schedule WHERE id_movie = id " +
                 "AND(date::DATE = CURRENT_TIMESTAMP::DATE))", false)
-
             };
-            TodaySchedule = DAOFactory.GetIdFilmWithSchedule(DateTime.Now);
+
+            var schedule = DAOFactory.GetIdFilmWithSchedule(DateTime.Now);
+            
+            foreach(var film in MainModel.TodayFilms)
+            {
+                film.Schedule = schedule[film.Id];
+            };
         }
     }
 }

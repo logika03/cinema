@@ -19,7 +19,7 @@ namespace test.Models
         public IEnumerable<string> Producers;
         public IEnumerable<string> Actors;
 
-        //public IEnumerable<ScheduleViewModel> Schedule;
+        public IEnumerable<ScheduleViewModel> Schedule;
         public IEnumerable<ReviewViewModel> Reviews;
 
         /*public FilmViewModel(int id, string name, string description, int year,
@@ -40,5 +40,6 @@ namespace test.Models
             Schedule = schedule;
             Reviews = reviews;
         }*/
+        public int CountryId { get; set; }
     }
 }

@@ -26,15 +26,21 @@ namespace test
 
         //Аутентификация пользователя(ставит в cookie информацию о пользователе
         //и позволяет потом получать ее через сервис)
-        public void AuthenticateUser(string login)
+        public void AuthenticateUser(string login, int id)
         {
             _httpContextAccessor.HttpContext.Session.SetString("Login", login);
+            _httpContextAccessor.HttpContext.Session.SetString("Id", id.ToString());
+            IsAuthenticated = true;
+            Id = id;
+            Name = login;
         }
 
         //Стирание аутентификационных cookie с клиента пользователя
         public void Logout()
         {
             _httpContextAccessor.HttpContext.Session.Remove("Login");
+            _httpContextAccessor.HttpContext.Session.Remove("Id");
+            IsAuthenticated = false;
         }
     }
 }

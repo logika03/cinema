@@ -32,12 +32,20 @@ namespace test.Pages
             //Не авторизован - на главную станицу
             if (!_authService.IsAuthenticated)
                 return Redirect(Url.Content("~/"));
+
+            var schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {id}").FirstOrDefault();
+            schedule.Hall = FilmViewModelDAO.GetHallByScheduleId(id);
+
+            var bookings = DAOFactory.GetBooknig(id);
+            foreach (var booking in bookings)
+                booking.Schedule = schedule;
+
             BookingPageViewModel = new BookingPageViewModel
             {
                 //Передаем сеанс с указаным id
-                Schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {id}").FirstOrDefault(),
+                Schedule = schedule,
                 //Передаем все бронирования на этот сеанс
-                BookingsInSchedule = DAOFactory.GetBooknig(id)
+                BookingsInSchedule = bookings
             };
             return Page();
         }

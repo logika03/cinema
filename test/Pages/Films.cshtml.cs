@@ -13,7 +13,6 @@ namespace test.Pages
     public class FilmsModel : PageModel
     {
         public FilmsViewModel FilmsViewModel;
-        public BookingViewModel BookingViewModel;
         public IActionResult OnGet(int page = 1)
         {
             CreateFilmsList(page);

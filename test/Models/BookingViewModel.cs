@@ -9,5 +9,6 @@
         public ScheduleViewModel Schedule;
         public int Row;
         public int Seat;
+        public int ScheduleId { get; set; }
     }
 }

@@ -1,26 +1,24 @@
-﻿@model Tuple<FilmViewModel, List<ScheduleViewModel>>
+﻿@model FilmViewModel
 @{
-    var scheduleToday = Model.Item2;
-    var film = Model.Item1;
 }
 
-<div href="@Url.Content($"~/film/{film.Id}")" class="with-schedule list-group-item list-group-item-action d-flex flex-row align-items-start li-dark-transparent">
+<div href="@Url.Content($"~/film/{Model.Id}")" class="with-schedule list-group-item list-group-item-action d-flex flex-row align-items-start li-dark-transparent">
     <div class="movie-list-item-content">
-        <img src="@Url.Content(film.ImagePath)" class="bg-white d-flex align-items-center justify-content-center h-100 w-100"/>
+        <img src="@Url.Content(Model.ImagePath)" class="bg-white d-flex align-items-center justify-content-center h-100 w-100"/>
     </div>
 
     <div class="movie-list-item-info d-flex flex-column align-items-start justify-content-around ml-4">
         <div class="mb-1 d-flex justify-content-center align-items-center">
-            <h4>@film.Name</h4>
+            <h4>@Model.Name</h4>
             <h5 class="badge badge-secondary ml-2" style="font-size: 1rem; margin-bottom:3px">New</h5>
         </div>
 
         <div class="movie-list-item-time-badges d-flex">
-            @foreach (var schedule in scheduleToday)
+            @foreach (var schedule in Model.Schedule)
             {
                 @await Component.InvokeAsync("ScheduleBadge", new {scheduleViewModel = schedule})
             }
         </div>
-        <small>@film.Genres.Aggregate((a, b) => $"{a}, {b}")</small>
+        <small>@Model.Genres.Aggregate((a, b) => $"{a}, {b}")</small>
     </div>
 </div>

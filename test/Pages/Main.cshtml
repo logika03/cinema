@@ -53,8 +53,7 @@
         <div id="movies-today-list" class="movies-today-list list-group list-group-flush">
             @foreach (var movie in Model.MainModel.TodayFilms)
             {
-                var model = new Tuple<FilmViewModel, List<ScheduleViewModel>>(movie, Model.TodaySchedule[movie.Id]);
-                @Html.Partial("_MovieTodayItemPartial", model);
+                @Html.Partial("_MovieTodayItemPartial", movie);
             }
         </div>
     </div>

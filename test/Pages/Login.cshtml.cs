@@ -17,24 +17,22 @@ namespace test.Pages
         {
             _authService = authService;
         }
-        public IActionResult OnGet()
+        public IActionResult OnGet(string login, string password)
         {
-            var login = "logika";
-            var password = "12aZ";
-            var done = AddUsers(login, password);
+            var hashedPassword = password.GetSHA256Hash();
+            var done = AddUsers(login, hashedPassword);
             if (done)
-                return Redirect("/");
-            return Redirect("/");
+                return new OkResult();
+            return BadRequest();
         }
 
-        public IActionResult OnPost(params object[] arg) // string login, string password)
+        public IActionResult OnPost(string login, string password) // string login, string password)
         {
-            var login = "logika";
-            var password = "12aZ";
-            var done = AddUsers(login, password);
+            var hashedPassword = password.GetSHA256Hash();
+            var done = AddUsers(login, hashedPassword);
             if (done)
-                return Redirect(string.Format("~/user/{0}", _authService.Id));
-            return Redirect("/");
+                return new OkResult();
+            return BadRequest();
         }
 
         private bool AddUsers(string login, string password)
@@ -43,12 +41,7 @@ namespace test.Pages
             var id = tupleIdName.Item1;
             if (id > 0)
             {
-                _authService.Id = id;
-                _authService.IsAuthenticated = true;
-                _authService.Name = tupleIdName.Item2;
-               /* ProjectMovieController.AuthService.Id = id;
-                ProjectMovieController.AuthService.IsAuthenticated = true;
-                ProjectMovieController.AuthService.Name = tupleIdName.Item2;*/
+                _authService.AuthenticateUser(login, id);
                 return true;
             }
             return false;

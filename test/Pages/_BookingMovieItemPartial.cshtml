@@ -22,8 +22,8 @@
                 <div class="col-lg-4 d-none d-860-flex d-lg-flex d-xl-flex flex-column fs-12">
                     @*//косяк - посмотри. не забудь*@
                     <h5>Зал: @Model.Schedule.Hall.HallNumber</h5>
-                    <div>Ряд: @((int)Math.Floor((double)Model.Seat / Model.Schedule.Hall.RowCount + 1))</div>
-                    <div>Место: @(Model.Seat % Model.Schedule.Hall.SeatsRowCount[0]+ 1)</div>
+                    <div>Ряд: @(Model.Row + 1)</div>
+                    <div>Место: @(Model.Seat + 1)</div>
                 </div>
 
                 <div class="col-lg-auto d-none d-860-flex d-lg-flex d-xl-flex flex-column fs-12">
