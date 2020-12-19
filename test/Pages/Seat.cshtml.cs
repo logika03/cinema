@@ -69,6 +69,8 @@ namespace test.Pages
             }*/
             return Page();
         }
+        
+        
         public async Task<IActionResult> OnPost(int id)
         {
             if (!_authService.IsAuthenticated)
@@ -84,24 +86,15 @@ namespace test.Pages
             dynamic result = JsonConvert.DeserializeObject(json);
 
             var schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {id}").FirstOrDefault();
-            var seats = FilmViewModelDAO.GetSeatsRowCountByHallId(schedule.Hall.HallNumber, schedule.Hall.RowCount);
+            schedule.Hall = FilmViewModelDAO.GetHallByScheduleId(id);
+            var seats = schedule.Hall.SeatsRowCount;
             var bookedSeats = new List<Tuple<int, int, int>>();
             //Кэшируем места, которые хочет забронировать пользователь и проверяем
             //Не занято ли оно уже
-            foreach (int index in result)
+            foreach (var data in result)
             {
-                int row = 0;
-                int seat = 0;
-                var curIndex = index;
-                for (var i = 1; i < seats.Length - 1; i++)
-                {
-                    curIndex -= seats[i];
-                    if (curIndex - seats[i + 1] <= 0)
-                    {
-                        row = i + 1;
-                        seat = curIndex;
-                    }
-                }
+                int row = data.row;
+                int seat = data.seat;
                 if (DAOFactory.Contains(string.Format("SELECT row = {0} AND place = {1} AND id_schedule = {2} FROM tickets", row, seat, id)))
                     return BadRequest(); //Status code 400
                 var price = DAOFactory.FindPrice(string.Format("SELECT fix_price FROM schedule WHERE id_schedule = {0}", id));
@@ -111,6 +104,7 @@ namespace test.Pages
                     price = (int)Math.Ceiling(price * 1.2);
                 bookedSeats.Add(new Tuple<int, int, int>(row, seat, price));
             }
+            
             foreach (var pair in bookedSeats)
             {
                 DAOFactory.AddData(string.Format("INSERT INTO tickets(row, place, id_schedule, price, id_user, code) VALUES " +

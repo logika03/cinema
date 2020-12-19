@@ -4,6 +4,7 @@ namespace test.Models
 {
     public class ReviewViewModel
     {
+        public int UserId;
         public UserViewModel User;
         public string ReviewText;
         public DateTime TimeOfReview;
@@ -16,5 +17,8 @@ namespace test.Models
             TimeOfReview = time;
             Rating = rating;
         }
+
+        public ReviewViewModel()
+        { }
     }
 }

@@ -14,7 +14,6 @@ namespace test.Pages
     public class ScheduleModel : PageModel
     {
         public IEnumerable<FilmViewModel> Films;
-        public Dictionary<int, List<ScheduleViewModel>> ScheduleCurrent;
         public IActionResult OnGet()
         {
             CreateListFilmsByDate();
@@ -37,12 +36,13 @@ namespace test.Pages
                     Request.Query["schedule_date"],
                     "dd.MM.yyyy", CultureInfo.InvariantCulture);
             HttpContext.Items["CurrentDay"] = date;
-            ScheduleCurrent = DAOFactory.GetIdFilmWithSchedule(date);
+            
+            var scheduleCurrent = DAOFactory.GetIdFilmWithSchedule(date);
             //Передаем во View только те фильмы, которые имеют хотя бы один сеанс на выбранную дату date
-            Films = MainViewModelDAO.GetFilms(
-                $"AND id IN (SELECT id_movie FROM schedule WHERE date::DATE = '{date:yyyy-MM-dd}')");
-            /*foreach (var film in Films)
-                film.Schedule = FilmViewModelDAO.GetScheduleById(film.Id, "id_movie");*/
+            Films = FilmViewModelDAO.GetFilms(
+                string.Format("WHERE id IN (SELECT id_movie FROM schedule WHERE date::DATE = '{0}')", date.ToString("yyyy-MM-dd")), false);
+            foreach (var film in Films)
+                film.Schedule = scheduleCurrent[film.Id];
         }
     }
 }

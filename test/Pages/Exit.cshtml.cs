@@ -18,10 +18,8 @@ namespace test.Pages
         public IActionResult OnGet()
         {
             if (_authService.IsAuthenticated)
-            {
                 _authService.Logout();
-                _authService.IsAuthenticated = false;
-            }
+            
             return Redirect(Url.Content("~/"));
         }
     }

@@ -14,11 +14,18 @@ namespace test.Pages
 {
     public class UserBookingModel : PageModel
     {
-        public BookingPageViewModel BookingPageViewModel;
         public UserViewModel UserViewModel;
+
         public IActionResult OnGet(int id)
         {
             UserViewModel = FilmViewModelDAO.GetUserById(id);
+            UserViewModel.Bookings = FilmViewModelDAO.GetBookingsByUserId(id);
+            foreach (var booking in UserViewModel.Bookings)
+            {
+                booking.Schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {booking.ScheduleId}").FirstOrDefault();
+                booking.Schedule.Hall = FilmViewModelDAO.GetHallByScheduleId(booking.Schedule.Id);
+                booking.Schedule.Film = FilmViewModelDAO.GetFilms($"WHERE id = {booking.Schedule.FilmId}", false).FirstOrDefault();
+            }
             return Page();
         }
     }

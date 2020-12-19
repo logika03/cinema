@@ -24,7 +24,7 @@ namespace test.Pages
         {
             var user = FilmViewModelDAO.GetUserById(id);
             if (_authService.IsAuthenticated
-                && _authService.Name == user.NickName)
+                && _authService.Id == id)
             {
                 ViewData["login_unavailable"] = false;
                 ViewData["email_unavailable"] = false;
@@ -48,7 +48,7 @@ namespace test.Pages
         {
            var user = FilmViewModelDAO.GetUserById(id);
             if (_authService.IsAuthenticated
-               && _authService.Name == user.NickName)
+               && _authService.Id == id)
             {
                 var loginUnavailable = false; //Логин(никнейм) занят
                 var emailUnavailable = false; //Email занят
@@ -72,6 +72,7 @@ namespace test.Pages
                     UserViewModel = user;
                     return Page();
                 }
+                
                 DAOFactory.AddData(string.Format("UPDATE users SET nickname = '{0}', name = '{1}', surname = '{2}', email = '{3}' WHERE id = {4}",
                     nickname, name, surname, email, id));
                 user.Name = name;
@@ -82,7 +83,7 @@ namespace test.Pages
 
                 //Это чтобы обновить аунтификационные cookie
                 _authService.Logout();
-                _authService.AuthenticateUser(nickname);
+                _authService.AuthenticateUser(nickname, id);
             }
 
             //Если все прошло хорошо или 

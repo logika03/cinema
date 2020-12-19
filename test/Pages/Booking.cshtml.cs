@@ -32,12 +32,20 @@ namespace test.Pages
             //Не авторизован - на главную станицу
             if (!_authService.IsAuthenticated)
                 return Redirect(Url.Content("~/"));
+
+            var schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {id}").FirstOrDefault();
+            schedule.Hall = FilmViewModelDAO.GetHallByScheduleId(id);
+
+            var bookings = DAOFactory.GetBooknig(id);
+            foreach (var booking in bookings)
+                booking.Schedule = schedule;
+
             BookingPageViewModel = new BookingPageViewModel
             {
                 //Передаем сеанс с указаным id
-                Schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {id}").FirstOrDefault(),
+                Schedule = schedule,
                 //Передаем все бронирования на этот сеанс
-                BookingsInSchedule = DAOFactory.GetBooknig(id)
+                BookingsInSchedule = bookings
             };
             return Page();
         }
@@ -62,11 +70,11 @@ namespace test.Pages
             var bookedSeats = new List<Tuple<int, int, int>>();
             //Кэшируем места, которые хочет забронировать пользователь и проверяем
             //Не занято ли оно уже
-            foreach (int index in result)
+            foreach (var index in result)
             {
-                int row = 0;
-                int seat = 0;
-                var curIndex = index;
+                int row = index["row"];
+                int seat = index["seat"];
+               /* var curIndex = index;
                 for (var i = 1; i < seats.Length - 1; i++)
                 {
                     curIndex -= seats[i];
@@ -75,7 +83,7 @@ namespace test.Pages
                         row = i + 1;
                         seat = curIndex;
                     }
-                }
+                }*/
                 if (DAOFactory.Contains(string.Format("SELECT row = {0} AND place = {1} AND id_schedule = {2} FROM tickets", row, seat, id)))
                     return BadRequest(); //Status code 400
                 var price = DAOFactory.FindPrice(string.Format("SELECT fix_price FROM schedule WHERE id_schedule = {0}", id));
@@ -90,7 +98,13 @@ namespace test.Pages
                 DAOFactory.AddData(string.Format("INSERT INTO tickets(row, place, id_schedule, price, id_user, code) VALUES " +
                     "({0}, {1},{2},{3},{4},{5})", pair.Item1, pair.Item2, id, pair.Item3, _authService.Id, GenerateCode()));
             }
-            return StatusCode(200); //Redirect(Url.Content($"~/booking/{id}"));
+            return Redirect(Url.Content($"~/booking/{id}"));
+        }
+
+        private static Tuple<int, int> GetPlace(string index)
+        {
+            var a = index;
+            return Tuple.Create(0, 0);
         }
 
         private static string GenerateCode()

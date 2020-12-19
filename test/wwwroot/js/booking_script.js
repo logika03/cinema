@@ -8,7 +8,8 @@ $(function () {
     $('.seat-button').each(function (index) {
         let $this = $(this);
         let val = GetGridElementsPosition(index);
-        $this.attr("index", index);
+        $this.attr("row", val.row);
+        $this.attr("col", val.column);
         $this.text(val.column + 1);
 
         let rows = $('.places-grid');
@@ -45,13 +46,17 @@ $(function () {
         let seats = [];
         $('.seat-button:not([disabled]).chosen').each(function () {
             let $this = $(this);
-            let index = Number($this.attr("index"));
-            seats.push(index);
+            let place = {
+                row: Number($this.attr("row")), 
+                seat: Number($this.attr("col"))
+            };
+            seats.push(place);
         })
 
         $.ajax({
             type: "POST",
             url: window.location.origin + `/booking/${window.scheduleId}`,
+            headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
             data: JSON.stringify(seats),
             contentType: 'application/json',
             dataType: 'json'

@@ -9,15 +9,11 @@ namespace test.Models
         public FilmViewModel Film;
         public DateTime Time;
         public HallViewModel Hall;
-        public int IdFilm;
 
-        /*public ScheduleViewModel(int id, decimal pricePrSeat, FilmViewModel film, DateTime time, HallViewModel hall)
+        public ScheduleViewModel()
         {
-            Id = id;
-            PricePerSeat = pricePrSeat;
-            Film = film;
-            Time = time;
-            Hall = hall;
-        }*/
+        }
+
+        public int FilmId { get; set; }
     }
 }

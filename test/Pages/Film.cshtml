@@ -5,7 +5,6 @@
     var filmViewModel = Model.FilmViewModel;
     ViewData["title"] = filmViewModel.Name;
     var currentTime = (DateTime)HttpContext.Items["CurrentDay"];
-    var scheduleCurrent = Model.ScheduleCurrent;
 }
 
 <div id="main" class="z-index--1">
@@ -81,7 +80,7 @@
                 </div>
             </div>
             <div id="schedule-tags" class="d-flex justify-content-center p-2">
-                @foreach (var schedule in scheduleCurrent)
+                @foreach (var schedule in filmViewModel.Schedule)
                 {
                     @await Component.InvokeAsync("ScheduleBadge", new { scheduleViewModel = schedule })
                 }
