@@ -13,7 +13,7 @@ namespace test.DAO
         public static Dictionary<int, FilmViewModel> Films = 
               new Dictionary<int, FilmViewModel>();
 
-        public static List<FilmViewModel> GetFilms(string additionalCondition, bool needTwoGenres)
+        public static List<FilmViewModel> GetFilms(string additionalCondition, bool needTwoGenres, params NpgsqlParameter[] parameters)
         {
             var films = new List<FilmViewModel>();
             var sqlExpression = string.Format("SELECT id, title, id_country, release_year, duration, description, " +
@@ -36,7 +36,7 @@ namespace test.DAO
                 };
                 films.Add(film);
             }
-            DAOFactory.ToHandleRequest(sqlExpression, addValues);
+            DAOFactory.ToHandleRequest(sqlExpression, addValues, parameters);
             
             /*foreach(var film in films)
             {

@@ -17,12 +17,14 @@ namespace test.DAO
                "f9bb2b9ce77fa503537502236b7164dd081f91f04fdeb22d03cc4adea92c8d26",
                "davp5c92d72p4t");
 
-        public static void ToHandleRequest(string sqlExpression, Action<NpgsqlDataReader> addValues)
+        public static void ToHandleRequest(string sqlExpression, Action<NpgsqlDataReader> addValues, params NpgsqlParameter[] parameters)
         {
             using (var connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
                 NpgsqlCommand command = new NpgsqlCommand(sqlExpression, connection);
+                foreach (var parameter in parameters)
+                    command.Parameters.Add(parameter);
                 NpgsqlDataReader reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
