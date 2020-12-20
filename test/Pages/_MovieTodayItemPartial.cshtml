@@ -1,0 +1,24 @@
+﻿@model FilmViewModel
+@{
+}
+
+<div href="@Url.Content($"~/film/{Model.Id}")" class="with-schedule list-group-item list-group-item-action d-flex flex-row align-items-start li-dark-transparent">
+    <div class="movie-list-item-content">
+        <img src="@Url.Content(Model.ImagePath)" class="bg-white d-flex align-items-center justify-content-center h-100 w-100"/>
+    </div>
+
+    <div class="movie-list-item-info d-flex flex-column align-items-start justify-content-around ml-4">
+        <div class="mb-1 d-flex justify-content-center align-items-center">
+            <h4>@Model.Name</h4>
+            <h5 class="badge badge-secondary ml-2" style="font-size: 1rem; margin-bottom:3px">New</h5>
+        </div>
+
+        <div class="movie-list-item-time-badges d-flex">
+            @foreach (var schedule in Model.Schedule)
+            {
+                @await Component.InvokeAsync("ScheduleBadge", new {scheduleViewModel = schedule})
+            }
+        </div>
+        <small>@Model.Genres.Aggregate((a, b) => $"{a}, {b}")</small>
+    </div>
+</div>
