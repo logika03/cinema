@@ -1,0 +1,12 @@
+﻿@model FilmViewModel
+
+<a class="movie-slick-item" href="@Url.Content($"~/film/{Model.Id}")">
+    <span class="movie-slick-item-name">@Model.Name</span>
+    <div class="movie-slick-item-content">
+        <img src="@Url.Content(Model.ImagePath)" class="bg-white d-flex align-items-center justify-content-center h-100 w-100"/>
+    </div>
+    <div class="movie-slick-item-info">
+        <span>@Model.Genres.Take(3).Aggregate((a, b) => $"{a}, {b}")</span>
+        <span>@Model.Year г.</span>
+    </div>
+</a>

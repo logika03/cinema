@@ -1,0 +1,46 @@
+﻿@page
+@model cinema.Pages.ScheduleModel
+@{
+    var currentTime = Request.Query.ContainsKey("schedule_date") ?
+        (DateTime)HttpContext.Items["CurrentDay"] : DateTime.Now;
+}
+
+<div id="main" class="z-index--1">
+    <nav class="movies-list-page-nav shadow-down w-100">
+        <div id="movie-schedule" class="w-100 d-flex justify-content-center align-items-center flex-column">
+            <h4 class="p-1">Расписание</h4>
+            <div class="schedule-dropdown w-100">
+                <button id="schedule-page-button" class="btn dropdown-toggle d-flex justify-content-center w-100" type="button" data-target="schedule-dropdown-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @currentTime.Date.ToString("dd.MM.yyyy")
+                </button>
+                <div id="schedule-page-dropdown-menu" class="dropdown-menu dropdown-dark-transparent w-75" aria-labelledby="dropdownMenuButton">
+                    <form action="#" method="get">
+                        @{ var days = (int)(currentTime.Date - DateTime.Now.Date).TotalDays;}
+                        @for (int i = -days; i < 7 - days; i++)
+                        {
+                            if (i != 0)
+                            {
+                                <input type="submit" class="dropdown-item btn btn-dark-transparent" value="@currentTime.AddDays(i).ToString("dd.MM.yyyy")" name="schedule_date">
+                            }
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="movies-container">
+        <div id="movies-list" class="movies-today-list list-group list-group-flush">
+            @foreach (var film in Model.Films)
+            {
+                @await Html.PartialAsync("_ScheduleMovieItemPartial", film)
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/js/schedule_script.js"></script>
+}
+
