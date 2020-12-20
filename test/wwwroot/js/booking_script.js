@@ -4,6 +4,7 @@ $(function () {
     window.$price = $('#price');
     window.seatsPerRow = Number($('#seatsPerRow').val());
     window.scheduleId = Number($('#scheduleId').val());
+    window.rowsCount = $('#rowsCount').val();
 
     $('.seat-button').each(function (index) {
         let $this = $(this);
@@ -29,13 +30,14 @@ $(function () {
 
     $('.seat-button:not([disabled])').click(function () {
         let $this = $(this);
+        var price = FindPrice($(this));
         if ($this.hasClass('chosen')) {
-            window.totalPrice -= window.pricePerSeat;
+            window.totalPrice -= price;
             window.$price.text(window.totalPrice);
             $this.removeClass('chosen');
         }
         else {
-            window.totalPrice += window.pricePerSeat;
+            window.totalPrice += price;
             window.$price.text(window.totalPrice);
             $this.addClass('chosen');
         }
@@ -47,7 +49,7 @@ $(function () {
         $('.seat-button:not([disabled]).chosen').each(function () {
             let $this = $(this);
             let place = {
-                row: Number($this.attr("row")), 
+                row: Number($this.attr("row")),
                 seat: Number($this.attr("col"))
             };
             seats.push(place);
@@ -59,7 +61,7 @@ $(function () {
             headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
             data: JSON.stringify(seats),
             contentType: 'application/json',
-            dataType: 'json'
+            dataType: 'text'
         }).done(function () {
             document.location.reload();
         })
@@ -69,6 +71,16 @@ $(function () {
             });
     });
 });
+
+function FindPrice(element) {
+    var price = window.pricePerSeat;
+    var row = Number(element.attr("row"));
+    if (row == 0)
+        price /= 2;
+    else if (row == window.rowsCount - 1)
+        price *= 1.2;
+    return Math.ceil(price);
+}
 
 function GetGridElementsPosition(index) {
     const colCount = window.seatsPerRow;

@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace test
+namespace cinema
 {
     public static class StringExtensions
     {

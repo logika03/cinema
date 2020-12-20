@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using test.Models;
-using test.DAO;
-using test.Controllers;
-using System.Diagnostics;
+using cinema.Models;
+using cinema.DAO;
 
-namespace test.Pages
+namespace cinema.Pages
 {
     public class UserEditModel : PageModel
     {
@@ -22,7 +16,7 @@ namespace test.Pages
 
         public IActionResult OnGet(int id)
         {
-            var user = FilmViewModelDAO.GetUserById(id);
+            var user = UserDAO.GetUserById(id);
             if (_authService.IsAuthenticated
                 && _authService.Id == id)
             {
@@ -46,9 +40,8 @@ namespace test.Pages
             string surname,
             string email)
         {
-           var user = FilmViewModelDAO.GetUserById(id);
-            if (_authService.IsAuthenticated
-               && _authService.Id == id)
+            var user = UserDAO.GetUserById(id);
+            if (_authService.IsAuthenticated && _authService.Id == id)
             {
                 var loginUnavailable = false; //Логин(никнейм) занят
                 var emailUnavailable = false; //Email занят
@@ -72,16 +65,16 @@ namespace test.Pages
                     UserViewModel = user;
                     return Page();
                 }
-                
+
                 DAOFactory.AddData(string.Format("UPDATE users SET nickname = '{0}', name = '{1}', surname = '{2}', email = '{3}' WHERE id = {4}",
                     nickname, name, surname, email, id));
                 user.Name = name;
                 user.Surname = surname;
                 user.Email = email;
                 user.NickName = nickname;
-                _authService.Name = nickname; 
+                _authService.Name = nickname;
 
-                //Это чтобы обновить аунтификационные cookie
+                //обновить аутентификационные cookie
                 _authService.Logout();
                 _authService.AuthenticateUser(nickname, id);
             }

@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using test.Controllers;
-using test.DAO;
+using cinema.DAO;
 
-namespace test.Pages
+namespace cinema.Pages
 {
     public class LoginModel : PageModel
     {
@@ -26,7 +20,7 @@ namespace test.Pages
             return BadRequest();
         }
 
-        public IActionResult OnPost(string login, string password) // string login, string password)
+        public IActionResult OnPost(string login, string password)
         {
             var hashedPassword = password.GetSHA256Hash();
             var done = AddUsers(login, hashedPassword);
@@ -37,7 +31,7 @@ namespace test.Pages
 
         private bool AddUsers(string login, string password)
         {
-            var tupleIdName = DAOFactory.GetUserIdByLoginPassword(login, password);
+            var tupleIdName = UserDAO.GetUserIdByLoginPassword(login, password);
             var id = tupleIdName.Item1;
             if (id > 0)
             {

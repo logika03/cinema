@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace test.Models
+namespace cinema.Models
 {
     public class UserViewModel
     {

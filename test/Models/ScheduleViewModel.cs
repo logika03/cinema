@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace test.Models
+namespace cinema.Models
 {
     public class ScheduleViewModel
     {
@@ -9,10 +9,6 @@ namespace test.Models
         public FilmViewModel Film;
         public DateTime Time;
         public HallViewModel Hall;
-
-        public ScheduleViewModel()
-        {
-        }
 
         public int FilmId { get; set; }
     }

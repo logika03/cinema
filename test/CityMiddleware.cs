@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace test
+namespace cinema
 {
     public class CityMiddleware
     {

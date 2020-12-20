@@ -1,6 +1,6 @@
 ﻿@page "/booking/{id}"
 @using Microsoft.AspNetCore.Antiforgery
-@model test.Pages.BookingModel
+@model cinema.Pages.BookingModel
 @inject AuthService AuthService
 @inject IAntiforgery Antiforgery
 @{
@@ -21,6 +21,7 @@
             <div class="text-center">Цена за место: @schedule.PricePerSeat руб.</div>
             <input type="hidden" id="pricePerSeat" value="@schedule.PricePerSeat" />
             <input type="hidden" id="seatsPerRow" value="@schedule.Hall.SeatsRowCount[1]" />
+            <input type="hidden" id="rowsCount" value="@schedule.Hall.SeatsRowCount.Length" />
             <input type="hidden" id="scheduleId" value="@schedule.Id" />
         </div>
 
@@ -28,15 +29,21 @@
         </div>
 
         <div class="py-3 px-5 d-none" id="places">
-            @for (int i = 0; i < 20; i++)
+            @for (int i = 0; i < schedule.Hall.SeatsRowCount.Length; i++)
             {
-                var key = (i / schedule.Hall.SeatsRowCount[1], i % schedule.Hall.SeatsRowCount[1]);
-                if (unavailableSeats.ContainsKey(key))
+                for (int j = 0; j < schedule.Hall.SeatsRowCount[i]; j++)
                 {
-<div class="seat-button @(unavailableSeats[key].UserNickName == AuthService.Name?"user-seat":"")" disabled> </div> }
-                else
-                {
-<div class="seat-button"> </div>}
+                    var key = (i, j);
+                    if (unavailableSeats.ContainsKey(key))
+                    {
+                    <div class="seat-button @(unavailableSeats[key].UserNickName == AuthService.Name ? "user-seat" : "")" disabled> </div>
+
+                    }
+                    else
+                    {
+                    <div class="seat-button" row="@i" seat="@j"> </div>
+                    }
+                }
             }
         </div>
 

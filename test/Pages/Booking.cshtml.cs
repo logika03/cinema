@@ -8,35 +8,34 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
-using test.Models;
-using test.DAO;
-using test.Controllers;
+using cinema.Models;
+using cinema.DAO;
 
-namespace test.Pages
+namespace cinema.Pages
 {
     public class BookingModel : PageModel
     {
         public BookingPageViewModel BookingPageViewModel;
         public int Id = -1;
 
-        //Страница бронирования мест
-        //Id - это id сеанса(Schedule)
         private readonly AuthService _authService;
         public BookingModel(AuthService authService)
         {
             _authService = authService;
         }
+
+        //Страница бронирования мест
+        //Id - это id сеанса(Schedule)
         public IActionResult OnGet(int id)
         {
             Id = id;
             //Не авторизован - на главную станицу
             if (!_authService.IsAuthenticated)
                 return Redirect(Url.Content("~/"));
+            var schedule = ScheduleDAO.GetSchedule($"id_schedule = {id}").FirstOrDefault();
+            schedule.Hall = ScheduleDAO.GetHallByScheduleId(id);
 
-            var schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {id}").FirstOrDefault();
-            schedule.Hall = FilmViewModelDAO.GetHallByScheduleId(id);
-
-            var bookings = DAOFactory.GetBooknig(id);
+            var bookings = BookingDAO.GetBookingByScheduleId(id);
             foreach (var booking in bookings)
                 booking.Schedule = schedule;
 
@@ -65,46 +64,23 @@ namespace test.Pages
 
             dynamic result = JsonConvert.DeserializeObject(json);
 
-            var schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {id}").FirstOrDefault();
-            var seats = FilmViewModelDAO.GetSeatsRowCountByHallId(schedule.Hall.HallNumber, schedule.Hall.RowCount);
-            var bookedSeats = new List<Tuple<int, int, int>>();
+            var bookedSeats = new List<Tuple<int, int>>();
             //Кэшируем места, которые хочет забронировать пользователь и проверяем
             //Не занято ли оно уже
             foreach (var index in result)
             {
                 int row = index["row"];
                 int seat = index["seat"];
-               /* var curIndex = index;
-                for (var i = 1; i < seats.Length - 1; i++)
-                {
-                    curIndex -= seats[i];
-                    if (curIndex - seats[i + 1] <= 0)
-                    {
-                        row = i + 1;
-                        seat = curIndex;
-                    }
-                }*/
                 if (DAOFactory.Contains(string.Format("SELECT row = {0} AND place = {1} AND id_schedule = {2} FROM tickets", row, seat, id)))
                     return BadRequest(); //Status code 400
-                var price = DAOFactory.FindPrice(string.Format("SELECT fix_price FROM schedule WHERE id_schedule = {0}", id));
-                if (row == 1)
-                    price /= 2;
-                if (row == seats.Length - 1)
-                    price = (int)Math.Ceiling(price * 1.2);
-                bookedSeats.Add(new Tuple<int, int, int>(row, seat, price));
+                bookedSeats.Add(new Tuple<int, int>(row, seat));
             }
             foreach (var pair in bookedSeats)
             {
-                DAOFactory.AddData(string.Format("INSERT INTO tickets(row, place, id_schedule, price, id_user, code) VALUES " +
-                    "({0}, {1},{2},{3},{4},{5})", pair.Item1, pair.Item2, id, pair.Item3, _authService.Id, GenerateCode()));
+                DAOFactory.AddData(string.Format("INSERT INTO tickets(row, place, id_schedule, id_user, code) VALUES " +
+                    "({0}, {1},{2},{3},{4})", pair.Item1, pair.Item2, id, _authService.Id, GenerateCode()));
             }
-            return Redirect(Url.Content($"~/booking/{id}"));
-        }
-
-        private static Tuple<int, int> GetPlace(string index)
-        {
-            var a = index;
-            return Tuple.Create(0, 0);
+            return new OkResult();
         }
 
         private static string GenerateCode()

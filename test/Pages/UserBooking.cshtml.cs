@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
-using test.Models;
-using test.DAO;
+using cinema.Models;
+using cinema.DAO;
+using System;
 
-namespace test.Pages
+namespace cinema.Pages
 {
     public class UserBookingModel : PageModel
     {
@@ -18,13 +13,17 @@ namespace test.Pages
 
         public IActionResult OnGet(int id)
         {
-            UserViewModel = FilmViewModelDAO.GetUserById(id);
-            UserViewModel.Bookings = FilmViewModelDAO.GetBookingsByUserId(id);
+            UserViewModel = UserDAO.GetUserById(id);
+            UserViewModel.Bookings = BookingDAO.GetBookingsByUserId(id);
             foreach (var booking in UserViewModel.Bookings)
             {
-                booking.Schedule = FilmViewModelDAO.GetSchedule($"id_schedule = {booking.ScheduleId}").FirstOrDefault();
-                booking.Schedule.Hall = FilmViewModelDAO.GetHallByScheduleId(booking.Schedule.Id);
+                booking.Schedule = ScheduleDAO.GetSchedule($"id_schedule = {booking.ScheduleId}").FirstOrDefault();
+                booking.Schedule.Hall = ScheduleDAO.GetHallByScheduleId(booking.Schedule.Id);
                 booking.Schedule.Film = FilmViewModelDAO.GetFilms($"WHERE id = {booking.Schedule.FilmId}", false).FirstOrDefault();
+                if (booking.Row == 0)
+                    booking.Schedule.PricePerSeat /= 2;
+                else if (booking.Row == booking.Schedule.Hall.SeatsRowCount.Length - 1)
+                    booking.Schedule.PricePerSeat = Math.Round(booking.Schedule.PricePerSeat * (decimal) 1.2);
             }
             return Page();
         }

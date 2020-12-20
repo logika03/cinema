@@ -4,29 +4,71 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using test.Models;
-using test.DAO;
+using cinema.Models;
+using cinema.DAO;
 using System.Diagnostics;
+using System.Text;
+using Npgsql;
 
-namespace test.Pages
+namespace cinema.Pages
 {
     public class FilmsModel : PageModel
     {
         public FilmsViewModel FilmsViewModel;
-        public IActionResult OnGet(int page = 1)
+        public IActionResult OnGet(string search, string genre_filter, string sortby, int page = 1)
         {
-            CreateFilmsList(page);
+            CreateFilmsList(page, genre_filter, search, sortby);
+            ViewData["SortBy"] = sortby;
+            ViewData["SearchString"] = search;
+            ViewData["GenresFilter"] = genre_filter;
             return Page();
         }
-        public IActionResult OnPost(int page = 1)
+        public IActionResult OnPost(string search, string genre_filter, string sortby, int page = 1)
         {
-            CreateFilmsList(page);
+            CreateFilmsList(page, genre_filter, search, sortby);
             return Page();
         }
 
-        private void CreateFilmsList(int page)
+        private void CreateFilmsList(int page, string genre_filter, string search, string sortby)
         {
-            var films = MainViewModelDAO.GetFilms(""); // FilmViewModelDAO.GetFilms("WHERE is_rent = 1", false);
+            var whereStatement = new StringBuilder("WHERE is_rent = 1");
+            var parameters = new List<NpgsqlParameter>();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                whereStatement.Append(" AND LOWER(title) LIKE '%' || @title || '%'");
+                parameters.Add(new NpgsqlParameter("title", search.ToLower()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(sortby))
+            {
+                whereStatement.Append(" ORDER BY");
+                switch (sortby)
+                {
+                    case "date": whereStatement.Append(" release_year");
+                        break;
+                    
+                    case "rating": whereStatement.Append(" raiting");
+                        break;
+                }
+
+                whereStatement.Append(" DESC");
+            }
+
+            var films = FilmViewModelDAO.GetFilms(whereStatement.ToString(), false, parameters.ToArray());
+            
+            if (!string.IsNullOrWhiteSpace(genre_filter))
+            {
+                var genres = genre_filter.Split(',')
+                    .Select(genre => genre.Trim().ToLower())
+                    .ToHashSet();
+
+                films = films
+                    .Where(film => film.Genres
+                        .Any(genre => genres.Contains(genre)))
+                    .ToList();
+            }
+
             var filmsPerPage = 10;
             var totalPages = films.Count / filmsPerPage + (films.Count % filmsPerPage > 0 ? 1 : 0);
             FilmsViewModel = new FilmsViewModel(

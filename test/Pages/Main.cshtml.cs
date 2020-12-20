@@ -1,14 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using test.Models;
-using test.DAO;
-using System.Diagnostics;
+using cinema.Models;
+using cinema.DAO;
 
-namespace test.Pages.ProjectArt
+namespace cinema.Pages.ProjectArt
 {
     public class MainPageModel : PageModel
     {
@@ -31,7 +27,7 @@ namespace test.Pages.ProjectArt
                 //В TopFilms Берем N лучших по рейтингу фильмов
                 TopFilms = FilmViewModelDAO.GetFilms("WHERE is_rent = 1 ORDER BY raiting DESC LIMIT 6", true),
                 //В TodayFilms берем фильмы, у которых есть хотя бы 1 сеанс сегодня
-                TodayFilms = FilmViewModelDAO.GetFilms("WHERE is_rent = 1 AND EXISTS (SELECT * FROM schedule WHERE id_movie = id " +
+                TodayFilms = FilmViewModelDAO.GetFilms("WHERE is_rent = 1 AND EXISTS (SELECT 1 FROM schedule WHERE id_movie = id " +
                 "AND(date::DATE = CURRENT_TIMESTAMP::DATE))", false)
             };
 

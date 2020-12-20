@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using test.Controllers;
 
-namespace test.Pages
+namespace cinema.Pages
 {
     public class ExitModel : PageModel
     {

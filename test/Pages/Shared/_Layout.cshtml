@@ -142,13 +142,24 @@
         <div class="collapse" id="search-container">
             <nav class="navbar navbar-dark nav-dark-transparent-2 navbar-expand-lg justify-content-around">
                 <form id="search-form" class="w-75" action="@Url.Content("~/films")" method="get">
-                    <div id="search-filters-container">
-
+                    <div id="search-filters-container" class="mb-3 mt-2">
+                        <div id="genres-filter" class="d-flex align-items-center">
+                            <span class="text-white-transparent">Жанры: </span>
+                            <input type="text" class="form-control text-outline-dark-transparent ml-3" name="genre_filter" placeholder="Перечислите жанры через запятую, например: Комедия, Ужасы" value="@(ViewData["GenresFilter"] ?? "")"/>
+                        </div>
+                    
+                        <div id="sorting-filter" class="d-flex align-items-center mt-3">
+                            <span class="text-white-transparent">Сортировать по: </span>
+                            <input @(ViewData["SortBy"] == null || (string)ViewData["SortBy"] == "date" ? "checked" : "") id="sortby-date" type="radio" class="form-control radio-dark-transparent ml-3" name="sortby" value="date"/>
+                            <label class="ml-5 mb-0 text-white-transparent" for="sortby-date">Дате</label>
+                            <input @(ViewData["SortBy"] != null && (string)ViewData["SortBy"] == "rating" ? "checked" : "") id="sortby-rating" type="radio" class="form-control radio-dark-transparent ml-3" name="sortby" value="rating"/>
+                            <label class="ml-5 mb-0 text-white-transparent" for="sortby-rating">Рейтингу</label>
+                        </div>
                     </div>
                     <div class="input-group">
-                        <input class="form-control text-outline-dark-transparent my-2 my-sm-0" type="search" placeholder="Введите название фильма" name="search" />
+                        <input class="form-control text-outline-dark-transparent my-2 my-sm-0" type="search" placeholder="Введите название фильма" name="search" value="@(ViewData["SearchString"] ?? "")"/>
                         <div class="input-group-append">
-                            <input class="btn btn-outline-dark-transparent-2 my-2 my-sm-0 border-left-0" type="submit" value="Поиск" />
+                            <input class="btn btn-outline-dark-transparent-2 my-2 my-sm-0 border-left-0" type="submit" value="Поиск"/>
                         </div>
                     </div>
                 </form>

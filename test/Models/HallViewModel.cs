@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace test.Models
+namespace cinema.Models
 {
     public class HallViewModel
     {

@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using test.Models;
-using test.DAO;
-using test.Controllers;
+using cinema.Models;
+using cinema.DAO;
 
-namespace test.Pages
+namespace cinema.Pages
 {
     public class FilmModel : PageModel
     {
@@ -42,7 +40,6 @@ namespace test.Pages
 
         private void CreateDataAboutFilm(int id)
         {
-            //Ёто нужно, чтобы смотреть расписание фильма на разные дни
             //»нформаци€ о выбранном дне сохран€етс€ в HttpContext.Items["CurrentDay"]
             //ѕо умолчанию равен дате сегодн€
             var timeNow = DateTime.Now;
@@ -54,14 +51,13 @@ namespace test.Pages
             HttpContext.Items["CurrentDay"] = currentDay;
 
             var film = FilmViewModelDAO.GetFilms($"WHERE id = {id}", false).FirstOrDefault();
-            //film.Schedule = FilmViewModelDAO.GetScheduleById(id, "id_movie");
             FilmViewModel = film;
 
             FilmViewModel.Actors = FilmViewModelDAO.GetActorsByFilmId(FilmViewModel.Id);
             FilmViewModel.Producers = FilmViewModelDAO.GetProducersByFilmId(FilmViewModel.Id);
             FilmViewModel.Country = FilmViewModelDAO.GetCounrtyById(FilmViewModel.CountryId);
             FilmViewModel.Reviews = FilmViewModelDAO.GetReviewByFilmId(FilmViewModel.Id);
-            FilmViewModel.Schedule = FilmViewModelDAO.GetSchedule($"id_movie={id} AND date::DATE = '{currentDay:yyyy-MM-dd}'");
+            FilmViewModel.Schedule = ScheduleDAO.GetSchedule($"id_movie={id} AND date::DATE = '{currentDay:yyyy-MM-dd}'");
         }
     }
 }

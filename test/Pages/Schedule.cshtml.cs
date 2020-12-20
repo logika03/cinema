@@ -6,10 +6,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using test.Models;
-using test.DAO;
+using cinema.Models;
+using cinema.DAO;
 
-namespace test.Pages
+namespace cinema.Pages
 {
     public class ScheduleModel : PageModel
     {

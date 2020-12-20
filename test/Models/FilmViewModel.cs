@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace test.Models
+namespace cinema.Models
 {
     public class FilmViewModel
     {
@@ -22,24 +20,6 @@ namespace test.Models
         public IEnumerable<ScheduleViewModel> Schedule;
         public IEnumerable<ReviewViewModel> Reviews;
 
-        /*public FilmViewModel(int id, string name, string description, int year,
-        int rating, List<string> genres, string imagePath, TimeSpan duration,
-        List<string> producers, IEnumerable<string> actors, IEnumerable<ScheduleViewModel> schedule,
-        IEnumerable<ReviewViewModel> reviews)
-        {
-            Id = id;
-            Name = name;
-            Description = description;
-            Year = year;
-            Rating = rating;
-            Genres = genres;
-            ImagePath = imagePath;
-            Duration = duration;
-            Producers = producers;
-            Actors = actors;
-            Schedule = schedule;
-            Reviews = reviews;
-        }*/
         public int CountryId { get; set; }
     }
 }

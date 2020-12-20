@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using test.Models;
-using test.DAO;
-using test.Controllers;
+using cinema.Models;
+using cinema.DAO;
 
-namespace test.Pages
+namespace cinema.Pages
 {
     public class RegistrationModel : PageModel
     {
@@ -27,8 +22,7 @@ namespace test.Pages
             return Page();//model with default values
         }
         public IActionResult OnPostRegistration(string login, string name, string surname,
-            string email, string password,
-            string confirmationPassword, bool terms)
+            string email, string password)
         {
             RegistrationViewModel = new RegistrationViewModel()
             {
@@ -38,7 +32,6 @@ namespace test.Pages
                 Surname = surname
             };
             //Validate email, login, name, surname, password, etc.
-            //if errors set RegistrationViewModel.IsErrors = true
             if (DAOFactory.Contains(string.Format("SELECT COUNT(*) FROM users WHERE email = '{0}'" , email)))
                 RegistrationViewModel.IsEmailUnavailable = true;
             if (DAOFactory.Contains(string.Format("SELECT COUNT(*) FROM users WHERE nickname = '{0}'", login)))

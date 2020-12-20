@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using test.Models;
+using cinema.Models;
 
-namespace test.DAO
+namespace cinema.DAO
 {
     public class MainViewModelDAO
     {

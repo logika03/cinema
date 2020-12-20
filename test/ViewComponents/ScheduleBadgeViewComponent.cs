@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
-using test.Models;
+using cinema.Models;
 
-namespace test
+namespace cinema
 {
     public class ScheduleBadgeViewComponent : ViewComponent
     {

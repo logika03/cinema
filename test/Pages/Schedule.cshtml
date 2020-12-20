@@ -1,5 +1,5 @@
 ﻿@page
-@model test.Pages.ScheduleModel
+@model cinema.Pages.ScheduleModel
 @{
     var currentTime = Request.Query.ContainsKey("schedule_date") ?
         (DateTime)HttpContext.Items["CurrentDay"] : DateTime.Now;

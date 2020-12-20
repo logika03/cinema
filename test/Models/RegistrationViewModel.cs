@@ -1,4 +1,4 @@
-﻿namespace test.Models
+﻿namespace cinema.Models
 {
     public class RegistrationViewModel
     {
