@@ -1,0 +1,25 @@
+﻿@model ReviewViewModel
+
+<div class="list-group-item list-group-item-action p-0 d-flex flex-row align-items-start li-dark-transparent w-100">
+    <div class="w-100 list-group-flush list-group justify-content-lg-between align-items-center w-100">
+        <div href="@Url.Content($"~/user/{Model.User.Id}")" class="list-group-item py-2 li-dark-transparent justify-content-between w-100">
+            <div class="d-flex">
+                <div class="p-0 review-list-item-content">
+                    <img src="@Url.Content(Model.User.ImagePath)" class="bg-white d-flex align-items-center justify-content-center h-100 w-100"/>
+                </div>
+                <div class="ml-4 mr-auto d-flex justify-content-center align-items-start flex-column">
+                    <h5 class="mb-1">@Model.User.NickName</h5>
+                    <span>Рейтинг: @Model.Rating/10</span>
+                </div>
+                <div class="d-flex justify-content-center align-items-center flex-column">
+                    <span>Отзыв написан</span>
+                    <span class="fs-09 mt-1">@Model.TimeOfReview.ToString("dd.MM.yyyy") в @Model.TimeOfReview.ToString("HH:mm")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-100 no-cursor-action list-group-item li-dark-transparent d-none d-860-block d-lg-block d-xl-block">
+            <p>@Model.ReviewText</p>
+        </div>
+    </div>
+</div>
